@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>RedTeam Recon Dashboard</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">&#9673;</span>
+        <div class="brand-text">
+          <h1>Recon Dashboard</h1>
+          <div id="target" class="target">Reading active tab&hellip;</div>
+        </div>
+      </div>
+      <button id="rescan" class="rescan" title="Re-run recon">&#8635;</button>
+    </header>
+
+    <main id="panels">
+      <!-- Tech stack -->
+      <section class="panel" data-panel="tech">
+        <div class="panel-head">
+          <h2>Technology Stack</h2>
+          <span class="status" data-status>&hellip;</span>
+        </div>
+        <div class="panel-body" data-body>
+          <div class="placeholder">Fingerprinting page&hellip;</div>
+        </div>
+      </section>
+
+      <!-- WHOIS / RDAP -->
+      <section class="panel" data-panel="whois">
+        <div class="panel-head">
+          <h2>WHOIS &middot; RDAP</h2>
+          <span class="status" data-status>&hellip;</span>
+        </div>
+        <div class="panel-body" data-body>
+          <div class="placeholder">Querying registry&hellip;</div>
+        </div>
+      </section>
+
+      <!-- DNS -->
+      <section class="panel" data-panel="dns">
+        <div class="panel-head">
+          <h2>DNS Records</h2>
+          <span class="status" data-status>&hellip;</span>
+        </div>
+        <div class="panel-body" data-body>
+          <div class="placeholder">Resolving records&hellip;</div>
+        </div>
+      </section>
+
+      <!-- Ports -->
+      <section class="panel" data-panel="ports">
+        <div class="panel-head">
+          <h2>Exposed Ports &amp; Surface</h2>
+          <span class="status" data-status>&hellip;</span>
+        </div>
+        <div class="panel-body" data-body>
+          <div class="placeholder">Checking Shodan InternetDB&hellip;</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="disclaimer">
+      Passive intelligence from public sources (RDAP, DoH, Shodan InternetDB).
+      No active scanning is performed. Use only against assets you are
+      authorized to assess.
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

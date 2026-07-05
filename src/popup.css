@@ -1,0 +1,178 @@
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-2: #1c2330;
+  --border: #2a3140;
+  --text: #e6edf3;
+  --muted: #8b98a9;
+  --accent: #ff4d4d;
+  --accent-dim: #b33;
+  --ok: #3fb950;
+  --warn: #d29922;
+  --err: #f85149;
+  --chip: #21262d;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 420px;
+  max-height: 600px;
+  margin: 0;
+  overflow-y: auto;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---- Top bar ---- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #12171f, #0d1117);
+  border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { color: var(--accent); font-size: 18px; line-height: 1; }
+.brand-text { min-width: 0; }
+.brand-text h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+.target {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+.target .dom { color: var(--accent); }
+.rescan {
+  flex: none;
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.rescan:hover { background: #2a313d; }
+.rescan:active { transform: rotate(180deg); }
+
+/* ---- Panels ---- */
+main { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
+}
+.panel-head h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #cdd6e2;
+}
+.status {
+  font-size: 10.5px;
+  font-family: var(--mono);
+  color: var(--muted);
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--chip);
+}
+.status.loading { color: var(--warn); }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--err); }
+.panel-body { padding: 10px 12px; }
+.placeholder { color: var(--muted); font-style: italic; font-size: 12px; }
+.error-msg { color: var(--err); font-size: 12px; }
+.empty { color: var(--muted); font-size: 12px; }
+
+/* ---- Key/value rows ---- */
+.kv { display: grid; grid-template-columns: 92px 1fr; gap: 4px 10px; }
+.kv dt { color: var(--muted); font-size: 11.5px; }
+.kv dd { margin: 0; font-family: var(--mono); font-size: 11.5px; word-break: break-word; }
+
+/* ---- Chips ---- */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--chip);
+  border: 1px solid var(--border);
+  font-size: 11.5px;
+}
+.chip .cat { color: var(--muted); font-size: 10px; }
+.chip.port { font-family: var(--mono); }
+.chip.vuln { border-color: var(--accent-dim); color: #ffb3b3; }
+
+/* ---- Tech groups ---- */
+.tech-group { margin-bottom: 9px; }
+.tech-group:last-child { margin-bottom: 0; }
+.tech-group h3 {
+  margin: 0 0 5px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+}
+
+/* ---- DNS ---- */
+.dns-type { margin-bottom: 8px; }
+.dns-type:last-child { margin-bottom: 0; }
+.dns-type h3 {
+  margin: 0 0 3px;
+  font-size: 11px;
+  color: #cdd6e2;
+  font-family: var(--mono);
+}
+.dns-rec {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  padding: 2px 0;
+  word-break: break-all;
+  border-bottom: 1px dotted #232a36;
+}
+.dns-rec .ttl { color: var(--muted); }
+
+/* ---- Ports table ---- */
+.ports-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.section-label { color: var(--muted); font-size: 10.5px; margin: 8px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.mono-list { font-family: var(--mono); font-size: 11px; color: var(--text); }
+.mono-list div { padding: 1px 0; word-break: break-all; }
+
+.disclaimer {
+  padding: 10px 14px 14px;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+}
