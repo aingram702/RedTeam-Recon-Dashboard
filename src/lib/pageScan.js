@@ -47,7 +47,15 @@ export async function pageScan() {
 
   const headers = {};
   try {
-    const res = await fetch(location.href, { method: "GET", credentials: "include" });
+    // Reuse the browser cache where possible so this observational request does
+    // not re-trigger any server-side side effect of the original navigation,
+    // and use same-origin credentials only (never send cookies cross-origin).
+    const res = await fetch(location.href, {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "force-cache",
+      redirect: "manual",
+    });
     for (const name of HEADERS_OF_INTEREST) {
       const v = res.headers.get(name);
       if (v) headers[name] = v;

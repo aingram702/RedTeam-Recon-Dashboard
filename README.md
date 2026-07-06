@@ -24,6 +24,14 @@ design the extension never tries to. "Exposed ports" come from Shodan's
 
 Only run it against assets you own or are explicitly authorized to assess.
 
+To avoid leaking internal network information to third parties, the extension
+**refuses to recon private, loopback, link-local, CGNAT, and reserved-TLD
+hosts** (e.g. `10.x`, `192.168.x`, `*.local`, `*.corp`). If a public hostname
+resolves to a private IP (split-horizon DNS), the port lookup is skipped before
+the address is sent to Shodan. It requests `activeTab` rather than broad host
+access, declares an explicit Content-Security-Policy, and reads cookie *names*
+only (never values).
+
 ## How it works
 
 All lookups use free, key-less HTTPS services, so there is nothing to configure:
