@@ -1,0 +1,8 @@
+# Build artifacts
+dist/
+
+# Dependencies (dev tooling uses the globally-installed Playwright)
+node_modules/
+
+# OS cruft
+.DS_Store
