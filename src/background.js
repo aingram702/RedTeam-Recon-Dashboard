@@ -6,7 +6,7 @@ import { lookupDomain } from "./lib/rdap.js";
 import { lookupIP } from "./lib/ports.js";
 import { detect } from "./lib/fingerprints.js";
 import { pageScan } from "./lib/pageScan.js";
-import { registrableDomain, isScannableHost } from "./lib/domain.js";
+import { registrableDomain, isScannableHost, isPublicIPv4 } from "./lib/domain.js";
 
 // Message the popup directly (popup listens on runtime messages).
 function emit(panel, payload) {
@@ -40,7 +40,10 @@ async function runRecon(tab) {
 
   const hostname = url.hostname;
   if (!isScannableHost(hostname)) {
-    emit("meta", { ok: false, error: `"${hostname}" is not a scannable public host.` });
+    emit("meta", {
+      ok: false,
+      error: `"${hostname}" is a private, internal, or reserved host — external recon skipped to avoid leaking internal network data.`,
+    });
     return;
   }
 
@@ -64,17 +67,26 @@ async function runRecon(tab) {
   // DNS records for the exact hostname.
   const dnsPromise = panel("dns", () => lookupAll(hostname));
 
-  // Exposed ports: resolve to an IP first, then query InternetDB.
+  // Exposed ports: resolve to an IP first, then query InternetDB. Split-horizon
+  // DNS can point a public name at a private IP, so re-check before disclosing
+  // the address to Shodan.
   panel("ports", async () => {
     const ip = await resolveIPv4(hostname);
     if (!ip) throw new Error("Could not resolve an IPv4 address for this host.");
+    if (!isPublicIPv4(ip)) {
+      throw new Error(`Host resolves to a private/reserved IP (${ip}); skipped to avoid leaking internal network data.`);
+    }
     return lookupIP(ip);
   });
 
   await dnsPromise;
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  // Defense-in-depth: only act on messages originating from this extension's
+  // own contexts (the popup). externally_connectable is unset, so pages cannot
+  // reach us, but verify the sender anyway before doing any work.
+  if (sender.id !== chrome.runtime.id) return false;
   if (msg && msg.type === "recon:start" && msg.tab) {
     runRecon(msg.tab);
     sendResponse({ started: true });

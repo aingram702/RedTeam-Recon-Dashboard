@@ -3,7 +3,7 @@
 // exercised without live egress. Run: node tools/test.mjs
 import assert from "node:assert";
 
-import { registrableDomain, isScannableHost } from "../src/lib/domain.js";
+import { registrableDomain, isScannableHost, isPublicIPv4 } from "../src/lib/domain.js";
 import { detect } from "../src/lib/fingerprints.js";
 import { serviceName } from "../src/lib/ports.js";
 
@@ -60,8 +60,28 @@ test("isScannableHost: rejects single label", () =>
   assert.equal(isScannableHost("intranet"), false));
 test("isScannableHost: accepts domain", () =>
   assert.equal(isScannableHost("example.com"), true));
-test("isScannableHost: accepts bare IP", () =>
+test("isScannableHost: accepts public bare IP", () =>
   assert.equal(isScannableHost("93.184.216.34"), true));
+test("isScannableHost: rejects private IP (leak guard)", () =>
+  assert.equal(isScannableHost("192.168.1.1"), false));
+test("isScannableHost: rejects loopback IP", () =>
+  assert.equal(isScannableHost("127.0.0.1"), false));
+test("isScannableHost: rejects internal TLD", () =>
+  assert.equal(isScannableHost("intranet.corp"), false));
+test("isScannableHost: rejects .local", () =>
+  assert.equal(isScannableHost("printer.local"), false));
+
+console.log("isPublicIPv4 (leak guard)");
+test("public IP", () => assert.equal(isPublicIPv4("8.8.8.8"), true));
+test("RFC1918 10/8", () => assert.equal(isPublicIPv4("10.1.2.3"), false));
+test("RFC1918 172.16/12", () => assert.equal(isPublicIPv4("172.20.5.5"), false));
+test("RFC1918 192.168/16", () => assert.equal(isPublicIPv4("192.168.0.1"), false));
+test("CGNAT 100.64/10", () => assert.equal(isPublicIPv4("100.64.0.1"), false));
+test("link-local 169.254", () => assert.equal(isPublicIPv4("169.254.1.1"), false));
+test("loopback 127/8", () => assert.equal(isPublicIPv4("127.0.0.1"), false));
+test("multicast 224+", () => assert.equal(isPublicIPv4("239.255.0.1"), false));
+test("octet overflow rejected", () => assert.equal(isPublicIPv4("999.1.1.1"), false));
+test("non-IP rejected", () => assert.equal(isPublicIPv4("example.com"), false));
 
 console.log("ports.serviceName");
 test("well-known port maps", () => assert.equal(serviceName(443), "HTTPS"));
